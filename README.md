@@ -1,1 +1,1 @@
-# InventorGPT
+# AutoInvent
