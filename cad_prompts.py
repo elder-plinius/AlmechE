@@ -30,10 +30,17 @@ TECHNICAL_SPECIFICATION = {
 }
 
 # Prompt and temperature for creating manufacturing instructions based on technical specifications
-MANUFACTURING_INSTRUCTIONS = {
-    'prompt': """
-    Create detailed manufacturing instructions based on the provided technical specifications. 
-    Guide the manufacturing process step-by-step, ensuring precision and adherence to the specified requirements.
-    """,
+MANUFACTURING_INSTRUCTIONS = """
+Please provide detailed and structured parameters for manufacturing based on the technical specifications. Include essential dimensions, materials, and other relevant properties. 
+
+Example format for a simple object (e.g., a cube):
+- Type: Cube
+- Width: [Width in cm]
+- Height: [Height in cm]
+- Depth: [Depth in cm]
+- Material: [Material Type]
+
+Adjust the format according to the complexity and type of the object being designed.
+"""
     'temperature': 0.4  # adjust as needed
 }
