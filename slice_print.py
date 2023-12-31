@@ -5,9 +5,9 @@ import time
 import os
 
 # Configuration for PrusaSlicer
-PRUSASLICER_PATH = "C:/Program Files/Prusa3D/PrusaSlicer/prusa-slicer-console.exe"  # Update with the actual paths
-SLICER_CONFIG_PATH = "C:/Users/Guest1/Documents/PrusaSlicerConfig.ini"
-OUTPUT_GCODE_PATH = "C:/Users/Guest1/Desktop/AlmechE/output.gcode"  
+PRUSASLICER_PATH = "your-path-to-prusa-slicer-console.exe"  # Update with the actual path
+SLICER_CONFIG_PATH = "your-path-to-PrusaSlicerConfig.ini" # Update with the actual path
+OUTPUT_GCODE_PATH = "your-path-to-AlmechE/output.gcode" # Update with the actual path
 
 # Configuration for printer
 PRINTER_PORT = 'COM5'  # Adjust to your printer's serial port
