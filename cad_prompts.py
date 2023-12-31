@@ -1,46 +1,18 @@
 # cad_prompts.py
 
-# Prompt and temperature for generating innovative product ideas
-IDEA_GENERATION = {
-    'prompt': """
-    Consider the latest trends in the specified industry and generate innovative product ideas. 
-    Think about how new technologies can solve existing problems or create new opportunities.
-    """,
-    'temperature': 0.7  # adjust as needed
-}
-
-# Prompt and temperature for creating preliminary design plans
-DESIGN_PLANNING = {
-    'prompt': """
-    Create a preliminary design plan for the selected product idea. 
-    Detail the required components, their functions, and how they will interact. 
-    Consider aspects such as materials, durability, and user experience in your plan.
-    """,
-    'temperature': 0.6  # adjust as needed
-}
-
-# Prompt and temperature for developing detailed technical specifications
-TECHNICAL_SPECIFICATION = {
-    'prompt': """
-    Develop detailed technical specifications for the product's components. 
-    Include information on materials, dimensions, tolerances, and manufacturing requirements. 
-    Ensure all specifications meet industry standards and safety regulations.
-    """,
-    'temperature': 0.5  # adjust as needed
-}
-
-# Prompt and temperature for creating manufacturing instructions based on technical specifications
-MANUFACTURING_INSTRUCTIONS = """
-Please provide detailed and structured parameters for manufacturing based on the technical specifications. Include essential dimensions, materials, and other relevant properties. 
-
-Example format for a simple object (e.g., a cube):
-- Type: Cube
-- Width: [Width in cm]
-- Height: [Height in cm]
-- Depth: [Depth in cm]
-- Material: [Material Type]
-
-Adjust the format according to the complexity and type of the object being designed.
+# Prompt for generating innovative product ideas
+IDEA_GENERATION = """
+Generate simple-to-manufacture yet highly innovative and uniquely designed CAD object ideas.
+Think about how to simply address existing real-world problems, design something fun or beautiful, or create new opportunities in a unique way.
+Provide a concise description of the most promising idea that we can 3D print.
+Keep your response under 20 words.
 """
-    'temperature': 0.4  # adjust as needed
-}
+
+# Prompt for creating manufacturing instructions based on technical specifications
+MANUFACTURING_INSTRUCTIONS = """
+Based on the idea '{user_idea}', provide structured manufacturing instructions suitable for 3D printing.
+Craft a detailed and concise description that includes essential dimensions, materials, and geometric properties.
+If the concept is too complex for a single print, do the best possible version of a simplified Minimum Viable Product (MVP).
+Aim for a design that uses one object only. Explain the design in unambiguous terms as if to a novice Mechanical Engineer, focusing on 
+practicality and manufacturability. Keep your response concise and under 50 words.
+"""
