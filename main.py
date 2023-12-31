@@ -1,58 +1,56 @@
-# main.py
-
-import openai
-import os
+import logging
 import cad_prompts
+import speech_to_text
+from openai_text import generate_ai_text
+from modeling import text_to_cad, check_model_generation_status
+from slice_print import slice_with_prusaslicer, send_gcode_to_printer, find_latest_stl  # Assuming you have a function for AI text generation
 
-# Set your OpenAI API Key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def generate_ai_text(prompt: str, temperature: float) -> str:
-    """
-    Generates text based on a given prompt using OpenAI's GPT-4-1106-preview model.
-    :param prompt: The prompt to feed into the AI model.
-    :param temperature: Controls the randomness of the output (higher is more random).
-    :return: The generated text.
-    """
+# Configuration
+USE_SPEECH = True  # Set this to False to type your idea instead
+USE_AI_FOR_IDEA = False  # Set this to True to let AI generate the idea
+STL_BASE_DIR = "C:/Users/Guest1/Desktop/AlmechE"  # Directory where STL files are saved
+
+# Main function
+def main():
     try:
-        response = openai.Completion.create(
-            engine="gpt-4-1106-preview",  # Specify the GPT-4-1106-preview model
-            prompt=prompt,
-            max_tokens=150,  # Adjust based on your needs
-            n=1,
-            stop=None,
-            temperature=temperature  # Adjust for creativity. Lower is more deterministic.
-        )
-        return response.choices[0].text.strip()
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return "Error generating text."
+        # Idea generation or input
+        if USE_SPEECH and not USE_AI_FOR_IDEA:
+            logging.info("Please speak your idea for a CAD object:")
+            idea = speech_to_text.recognize_speech()
+        elif USE_AI_FOR_IDEA:
+            logging.info("Generating idea using AI...")
+            idea = generate_ai_text(cad_prompts.IDEA_GENERATION, 0.8)  # Adjust temperature as needed
+        else:
+            idea = input("Please type your idea for a CAD object: ")
 
-def main(use_ai_for_idea: bool):
-    # Initial idea generation
-    if use_ai_for_idea:
-        # AI generates an initial idea
-        idea = generate_ai_text(cad_prompts.IDEA_GENERATION['prompt'], cad_prompts.IDEA_GENERATION['temperature'])
-        print("AI-Generated Idea:", idea)
-    else:
-        # User provides the initial idea
-        idea = input("Enter your innovative idea: ")
-        print("User-Provided Idea:", idea)
-    
-    # Regardless of the initial idea source, the rest of the system is autonomous
-    
-    # AI helps in design planning
-    design_plan = generate_ai_text(cad_prompts.DESIGN_PLANNING['prompt'], cad_prompts.DESIGN_PLANNING['temperature'])
-    print("Design Plan:", design_plan)
-    
-    # AI develops technical specifications
-    technical_specs = generate_ai_text(cad_prompts.TECHNICAL_SPECIFICATION['prompt'], cad_prompts.TECHNICAL_SPECIFICATION['temperature'])
-    print("Technical Specifications:", technical_specs)
-    
-    # AI creates manufacturing instructions
-    manufacturing_instructions = generate_ai_text(cad_prompts.MANUFACTURING_INSTRUCTIONS['prompt'], cad_prompts.MANUFACTURING_INSTRUCTIONS['temperature'])
-    print("Manufacturing Instructions:", manufacturing_instructions)
+        logging.info(f"Idea received: {idea}")
+
+        # Generate manufacturing instructions
+        instructions_prompt = cad_prompts.MANUFACTURING_INSTRUCTIONS.format(user_idea=idea)
+        manufacturing_instructions = generate_ai_text(instructions_prompt, 0.8)
+        logging.info(f"Manufacturing Instructions:\n{manufacturing_instructions}")
+
+        # Generate the CAD model using the final instructions
+        operation_id = text_to_cad(manufacturing_instructions, "stl")
+        if operation_id:
+            logging.info(f"CAD model generation initiated. Operation ID: {operation_id}")
+            while True:
+                result = check_model_generation_status(operation_id)
+                if result and result.get("status") == "completed":
+                    logging.info("Model generation completed successfully.")
+                    stl_path = find_latest_stl(STL_BASE_DIR)
+                    slice_with_prusaslicer(stl_path)  # Slicing the STL
+                    send_gcode_to_printer()  # Sending to printer
+                    break
+                elif result and result.get("status") == "failed":
+                    logging.error("Model generation failed.")
+                    break
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
 
 if __name__ == "__main__":
-    USE_AI_FOR_IDEA = True  # Set to False to input your own idea
-    main(USE_AI_FOR_IDEA)
+    main()
