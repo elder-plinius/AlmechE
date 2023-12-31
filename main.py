@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Configuration
 USE_SPEECH = True  # Set this to False to type your idea instead
 USE_AI_FOR_IDEA = False  # Set this to True to let AI generate the idea
-STL_BASE_DIR = "C:/Users/Guest1/Desktop/AlmechE"  # Directory where STL files are saved
+STL_BASE_DIR = "your-path-to-AlmechE"  # Update with your path
 
 # Main function
 def main():
