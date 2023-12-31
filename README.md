@@ -1,4 +1,4 @@
-#AlmechE: Idea-to-Object
+# AlmechE: Idea-to-Object
 
 Welcome to AlmechE, your AI Mech-E that performs alchemy! This system is designed to streamline the process from conceptualizing a product to actualizing it in the real world. This README will guide you through setting up and using AlmechE to transform your ideas into physical objects with minimal technical knowledge required.
 Overview
