@@ -13,6 +13,9 @@ from openai_vision import OpenAIVision
 import cad_prompts
 
 class Almeche:
+    def __init__(self):
+        self.vision_model = OpenAIVision() 
+        self.STL_BASE_DIR = "C:/Users/Guest1/Desktop/AlmechE" 
 # Function to find the latest STL file
     def find_latest_stl(self, base_dir):
         subdirectories = [os.path.join(base_dir, d) for d in os.listdir(base_dir)
@@ -81,7 +84,7 @@ class Almeche:
             if audio_file is not None:
                 if audio_file.type == "audio/mp3":
                     audio_file = io.BytesIO(AudioSegment.from_mp3(audio_file).export(format="wav"))
-                user_intent = speech_to_text(audio_file)
+                user_intent = self.speech_to_text(audio_file)
                 st.text_area("Your transcribed text:", value=user_intent, height=100)
         elif idea_input_method == "Upload Image":
             uploaded_image = st.file_uploader("Upload an image", type=['jpg', 'jpeg', 'png'])
@@ -89,7 +92,7 @@ class Almeche:
                 # Display the uploaded image
                 st.image(uploaded_image, caption='Uploaded Image', use_column_width=True)
 
-                temp_image_path = save_uploaded_file(uploaded_image)
+                temp_image_path = self.save_uploaded_file(uploaded_image)
                 if temp_image_path:
                     image_analysis = vision_model.analyze_image(temp_image_path)
                     st.write("Image analysis:", image_analysis)
@@ -109,7 +112,10 @@ class Almeche:
                 instructions_prompt = cad_prompts.MANUFACTURING_INSTRUCTIONS.format(user_idea=idea)
                 manufacturing_instructions = generate_ai_text(instructions_prompt, 0.808)
                 st.write(f"Manufacturing instructions: {manufacturing_instructions}")
-                operation_id = text_to_cad(manufacturing_instructions, "stl")
+                formatted_prompt = cad_prompts.FORMATTED_INSTRUCTIONS.format(manufacturing_instructions=manufacturing_instructions)
+                formatted_instructions = generate_ai_text(formatted_prompt, 0.808)
+                st.write(f"Formatted instructions: {formatted_instructions}")
+                operation_id = text_to_cad(formatted_instructions, "stl")
                 if operation_id:
                     st.write(f"Model generation initiated. Operation ID: {operation_id}")
                     while True:
@@ -117,9 +123,9 @@ class Almeche:
                         if result and result.get("status") == "completed":
                             st.success("Model generated successfully.")
                             STL_BASE_DIR = "C:/Users/Guest1/Desktop/AlmechE"
-                            latest_stl_file = find_latest_stl(STL_BASE_DIR)
+                            latest_stl_file = self.find_latest_stl(STL_BASE_DIR)
                             if latest_stl_file:
-                                visualize_stl(latest_stl_file)
+                                self.visualize_stl(latest_stl_file)
                             break
                         elif result and result.get("status") == "failed":
                             st.error("Model generation failed.")
