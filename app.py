@@ -15,7 +15,7 @@ import cad_prompts
 class Almeche:
     def __init__(self):
         self.vision_model = OpenAIVision() 
-        self.STL_BASE_DIR = "C:/Users/Guest1/Desktop/AlmechE" 
+        self.STL_BASE_DIR = "." 
 # Function to find the latest STL file
     def find_latest_stl(self, base_dir):
         subdirectories = [os.path.join(base_dir, d) for d in os.listdir(base_dir)
@@ -122,7 +122,7 @@ class Almeche:
                         result = check_model_generation_status(operation_id)
                         if result and result.get("status") == "completed":
                             st.success("Model generated successfully.")
-                            STL_BASE_DIR = "C:/Users/Guest1/Desktop/AlmechE"
+                            STL_BASE_DIR = "."
                             latest_stl_file = self.find_latest_stl(STL_BASE_DIR)
                             if latest_stl_file:
                                 self.visualize_stl(latest_stl_file)
